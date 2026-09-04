@@ -1,3 +1,9 @@
+commit d3c7cbcc75ecbac374149aed76122cf9bd92549f
+Author: YJ <2603049@sit.singaporetech.edu.sg>
+Date:   Fri Sep 4 17:28:18 2026 +0800
+
+    Dynamic Profile
+
 commit a9b35ef3fd32e8027743e1bd8297d8db2175aa4c
 Author: YJ <2603049@sit.singaporetech.edu.sg>
 Date:   Fri Sep 4 17:19:19 2026 +0800
