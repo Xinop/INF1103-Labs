@@ -1,3 +1,9 @@
+commit 866b1da2ee6514b0eca81bcce44e7f61a8795322
+Author: YJ <2603049@sit.singaporetech.edu.sg>
+Date:   Fri Sep 4 17:37:14 2026 +0800
+
+    Fun Conditions
+
 commit d3c7cbcc75ecbac374149aed76122cf9bd92549f
 Author: YJ <2603049@sit.singaporetech.edu.sg>
 Date:   Fri Sep 4 17:28:18 2026 +0800
