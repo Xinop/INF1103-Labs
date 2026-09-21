@@ -28,8 +28,22 @@ def process_delivery(current_total, new_value):
 def calculate_tax(amount):
     return amount * 0.10
 
+def report_decorator(func):
+    def wrapper(total_units, failed_attempts):
+        func(total_units, failed_attempts)
 
+    def final(inventory, tax, total_deliveries, failed_attempts):
+        print("=======FINAL REPORT=======")
+        print(f"|| Current Inventory: {inventory}")
+        print(f"|| Taxes To Pay: ${tax:.2f}")
+        print(f"|| Total Deliveries Processed: {total_deliveries}")
+        print(f"|| Number of Failed/Rejected Entries: {failed_attempts}")
+        print("==========================")
 
+    wrapper.final = final
+    return wrapper
+
+@report_decorator
 def generate_report(total_units, failed_attempts):
     print(f"Deliveries Currently Processed: {total_units}")
     print(f"Current Number of Failed Attempts: {failed_attempts}")
@@ -40,6 +54,7 @@ def main():
     inventory = 0
     total_deliveries = 0
     failed_attempts = 0
+    total_tax = 0
 
     while True:
         value, failures = get_valid_input()
@@ -49,17 +64,12 @@ def main():
             break
 
         inventory = process_delivery(inventory, value)
-        tax = calculate_tax(value)
+        total_tax += calculate_tax(value)
 
         total_deliveries += 1
         generate_report(total_deliveries, failed_attempts)
 
-    print("=======FINAL REPORT=======")
-    print(f"||Current Inventory: {inventory} ")
-    print(f"||Taxes To Pay: ${tax:.2f} ")
-    print(f"||Total Deliveries Processed: {total_deliveries}")
-    print(f"||Number of Failed/Rejected Entries: {failed_attempts}")
-    print("==========================")
+    generate_report.final(inventory,total_tax,total_deliveries,failed_attempts)
 
 
 main()
