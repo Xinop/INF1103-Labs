@@ -14,11 +14,11 @@ def get_valid_input():
                 return value, failed_attempts
 
             failed_attempts += 1
-            print("Invalid input.Please input only integers.")
+            print("Invalid input. Negative values not allowed.")
 
         except ValueError:
             failed_attempts += 1
-            print("Invalid input.Negative values not allowed.")
+            print("Invalid input. Please input only integers.")
 
 
 def process_delivery(current_total, new_value):
