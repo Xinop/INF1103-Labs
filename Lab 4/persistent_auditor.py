@@ -153,7 +153,7 @@ def main():
     while True:
         endme,order_data = get_valid_input()
         if endme:
-            print("Order successfully saved to " + str(inventory_file))
+            print(f"Order successfully saved to {str(inventory_file)} \n")
             break
         failed_attempts += int(order_data[2])
 
@@ -161,8 +161,8 @@ def main():
         quantity = int(order_data[1])
         saved_order = save_inventory(product, quantity)
         product_id = saved_order[0]
-        print("Record Added!")
-        print(product_id, product, quantity)
+        print("\nRecord Added!")
+        print(f"ID:{product_id}\nProduct:{product}\nQty:{quantity}\n")
         total_deliveries += 1
         #generate_report(total_processed,total_transactions,failed_attempts)
 
@@ -172,5 +172,5 @@ def main():
     generate_report.final(total_processed,total_transactions,failed_attempts)
 
 
-#main()
+main()
 #generate_report(processed_units(), unit_transactions(), 0)

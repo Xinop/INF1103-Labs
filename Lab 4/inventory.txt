@@ -3,3 +3,7 @@
 3,keyboard,1
 4,usb cable,3
 5,gui,5
+6,app,79
+7,earphone,90
+8,penci,11
+9,eraser,11
