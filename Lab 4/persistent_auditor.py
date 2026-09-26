@@ -89,6 +89,8 @@ def load_inventory_decorator(func):
         inventory = func()
         print("=====Current Orders=====")
         print("ID| Product | Quantity")
+        if len(inventory) == 0:
+            print("(No previous orders found)")
         for i in inventory:
             order_line = " | ".join(map(str,i))
             print(order_line)

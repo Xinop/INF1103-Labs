@@ -7,3 +7,4 @@
 7,earphone,90
 8,penci,11
 9,eraser,11
+10,Phone,9
