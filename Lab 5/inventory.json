@@ -13,9 +13,10 @@
         "id": "P002",
         "name": "Keyboard",
         "price": 12.0,
-        "stock": 111,
+        "stock": 112,
         "transactions": [
-            111
+            111,
+            1
         ]
     },
     {
