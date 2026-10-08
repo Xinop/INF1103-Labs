@@ -1,101 +1,21 @@
-inventory_file = "inventory.txt"
-
-def get_valid_input():
-    failed_attempts = 0
-    invalid_characters = "[](),"
-
-    while True:
-        product_name = input("Enter Product Name or 'quit': ").strip()
-        if product_name.lower() == "quit":
-            return True, None
-        if not product_name:
-            failed_attempts += 1
-            print("Product Name cannot be empty.")
-            continue
-        if any(char in product_name for char in invalid_characters):
-            failed_attempts += 1
-            print("Product name contains invalid characters.")
-            continue
-        break
-
-    while True:
-        stock_quantity = input("Enter Quantity or 'quit': ").strip()
-        if stock_quantity.lower() == "quit":
-            return True, None
-        if not stock_quantity:
-            failed_attempts += 1
-            print("Quantity cannot be empty.")
-            continue
-        try:
-            quantity = int(stock_quantity)
-            if quantity < 0:
-                failed_attempts += 1
-                print("Invalid input. Negative values not allowed.")
-                continue
-            break
-        except ValueError:
-            failed_attempts += 1
-            print("Invalid input. Please input only integers.")
-            continue
-
-    order_data = [product_name, quantity, failed_attempts]
-
-    return False, order_data
-
-
-def unit_transactions():
-    inventory = load_inventory()
-    transactions = len(inventory) 
-    return transactions
-
-def processed_units():
-    inventory = load_inventory()
-    total = 0
-    for x in inventory:
-        try:
-            total += int(x[2])
-        except (ValueError, IndexError):
-            print("Invalid inventory record skipped.")
-    return total
-
-
-def report_decorator(func):
-    def wrapper(total_processed,total_transactions,failed_attempts):
-        func(total_processed,total_transactions,failed_attempts)
-
-    def final(total_processed,total_transactions,failed_attempts):
-        print("=======AUDIT REPORT=======")
-        print(f"|| Total Transactions Recorded: {total_transactions}")
-        # print(f"|| Taxes To Pay: ${tax:.2f}")
-        print(f"|| Total Units Processed: {total_processed}")
-        print(f"|| Number of Failed/Rejected Entries: {failed_attempts}")
-        print("==========================")
-
-    wrapper.final = final
-    return wrapper
-
-@report_decorator
-def generate_report(total_processed,total_transactions,failed_attempts):
-    print(f"Deliveries Currently Processed: {total_processed}")
-    print(f"Current Number of Transactions: {total_transactions}")
-    print(f"Current Number of Failed Attempts: {failed_attempts}")
-    print("\n")
+import json
+inventory_file = "inventory.json"
 
 def load_inventory_decorator(func):
     def wrapper():
         inventory = func()
         return inventory
+
     def start():
         inventory = func()
-        print("=====Current Orders=====")
-        print("ID| Product | Quantity")
+        print("========================================")
+        print("INVENTORY MANAGEMENT SYSTEM")
+        print("========================================")
         if len(inventory) == 0:
-            print("(No previous orders found)")
-        for i in inventory:
-            order_line = " | ".join(map(str,i))
-            print(order_line)
-        print("========================")
-
+            print("(No previous inventory found)")
+        else:
+            print(f"{inventory_file} found.")
+            print("Inventory loaded successfully.")
         return inventory
 
     wrapper.start = start
@@ -104,75 +24,211 @@ def load_inventory_decorator(func):
 
 @load_inventory_decorator
 def load_inventory():
-    global next_id
     inventory = []
-
     try:
         with open(inventory_file, "r") as file:
-            for line in file:
-                data = line.strip().split(",")
-                data[0] = int(data[0])
-                inventory.append(data)
-
-            if len(inventory) > 0:
-                next_id = max(i[0] for i in inventory) + 1
-            else:
-                next_id = 1
-
-    except FileNotFoundError:
-        inventory = []  
-        next_id = 1       
+            inventory = json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        inventory = []
+        with open(inventory_file, "w") as file:
+            json.dump(inventory, file, indent=4)
 
     return inventory
 
+def save_inventory(inventory):
+    with open(inventory_file, "w") as file:
+        json.dump(inventory, file, indent=4)
+
+    print("Inventory saved successfully.")
 
 
-def save_inventory(product, quantity):
-    global next_id
-    new_product = []
-    
-    order = [next_id, product, quantity] 
-    new_product.append(order)
-    
-    with open(inventory_file, "a") as file:
-        file.write(",".join(map(str, order)) + "\n")
+def display_all(inventory):
+    print("\n=====Current Inventory=====")
 
-    next_id += 1
+    if len(inventory) == 0:
+        print("(No products found)")
+        return
+    for product in inventory:
+        print(
+            f"ID: {product['id']} | "
+            f"Name: {product['name']} | "
+            f"Price: ${product['price']:.2f} | "
+            f"Stock: {product['stock']}"
+        )
+    print("===========================")
 
-    return order
 
 
+
+def search_product(inventory, product_id):
+    for product in inventory:
+        if product["id"].lower() == product_id.lower():
+            return product
+    return None
+
+
+
+def add_product(inventory):
+    invalid_characters = "[](),"
+    print("\n=====Add Product=====")
+    while True:
+        product_id = input("Product ID: ").strip()
+        if not product_id:
+            print("Product ID cannot be empty.")
+            continue
+        if search_product(inventory, product_id):
+            print("Product ID already exists.")
+            continue
+        break
+
+    while True:
+        product_name = input("Product Name: ").strip()
+        if not product_name:
+            print("Product Name cannot be empty.")
+            continue
+        if any(char in product_name for char in invalid_characters):
+            print("Product name contains invalid characters.")
+            continue
+        break
+
+    while True:
+        price_input = input("Price: ").strip()
+        if not price_input:
+            print("Price cannot be empty.")
+            continue
+        try:
+            price = float(price_input)
+            if price < 0:
+                print("Price cannot be negative.")
+                continue
+            break
+        except ValueError:
+            print("Invalid price.")
+
+
+    while True:
+        stock_input = input("Stock Quantity: ").strip()
+        if not stock_input:
+            print("Stock cannot be empty.")
+            continue
+        try:
+            stock = int(stock_input)
+            if stock < 0:
+                print("Stock cannot be negative.")
+                continue
+            break
+
+        except ValueError:
+            print("Invalid stock quantity.")
+
+    product = {
+        "id": product_id,
+        "name": product_name,
+        "price": price,
+        "stock": stock,
+        "transactions": [stock]
+    }
+
+    inventory.append(product)
+    print("\nProduct added successfully!")
+
+
+def update_stock(inventory):
+    print("\n=====Update Stock=====")
+    product_id = input("Enter Product ID: ").strip()
+    product = search_product(inventory, product_id)
+    if product is None:
+        print("Product not found.")
+        return
+
+    print(f"Product Found: {product['name']}")
+    print(f"Current Stock: {product['stock']}")
+
+    while True:
+        stock_input = input("New Stock Quantity: ").strip()
+        if not stock_input:
+            print("Stock cannot be empty.")
+            continue
+        try:
+            new_stock = int(stock_input)
+            if new_stock < 0:
+                print("Stock cannot be negative.")
+                continue
+            break
+
+        except ValueError:
+            print("Invalid stock quantity.")
+
+
+    old_stock = product["stock"]
+    transaction = new_stock - old_stock
+    product["stock"] = new_stock
+    if "transactions" not in product:
+        product["transactions"] = []
+
+    product["transactions"].append(transaction)
+    print("Stock updated successfully!")
+
+
+def search_product_menu(inventory):
+    print("\n=====Search Product=====")
+    product_id = input("Enter Product ID: ").strip()
+    product = search_product(inventory, product_id)
+    if product is None:
+        print("Product not found.")
+        return
+
+    print("\nProduct Found")
+    print("========================")
+    print(f"ID: {product['id']}")
+    print(f"Name: {product['name']}")
+    print(f"Price: ${product['price']:.2f}")
+    print(f"Stock: {product['stock']}")
+    print("========================")
+
+def menu():
+    print("\n---------- MENU ----------")
+    print("1. Display All Products")
+    print("2. Add Product")
+    print("3. Update Stock")
+    print("4. Search Product")
+    print("5. Save Inventory")
+    print("6. Exit")
+    print("--------------------------")
 
 
 def main():
-    total_deliveries = 0
-    failed_attempts = 0
-    total_tax = 0
-    next_id = 1
     inventory = load_inventory.start()
-    
-
     while True:
-        endme,order_data = get_valid_input()
-        if endme:
-            print(f"Order successfully saved to {str(inventory_file)} \n")
+        menu()
+        option = input("Enter option: ").strip()
+        if option == "1":
+            display_all(inventory)
+            continue
+        if option == "2":
+            add_product(inventory)
+            continue
+        if option == "3":
+            update_stock(inventory)
+            continue
+        if option == "4":
+            search_product_menu(inventory)
+            continue
+        if option == "5":
+            print("\nSaving inventory...")
+            save_inventory(inventory)
+            continue
+        if option == "6":
+            print("\nSaving inventory before exit...")
+            save_inventory(inventory)
+            print("\nThank you for using Inventory Management System.")
+            print("Program terminated.")
+
             break
-        failed_attempts += int(order_data[2])
 
-        product = str(order_data[0])
-        quantity = int(order_data[1])
-        saved_order = save_inventory(product, quantity)
-        product_id = saved_order[0]
-        print("\nRecord Added!")
-        print(f"ID:{product_id}\nProduct:{product}\nQty:{quantity}\n")
-        total_deliveries += 1
-        #generate_report(total_processed,total_transactions,failed_attempts)
-
-    total_processed = processed_units()
-    total_transactions = unit_transactions()
-    
-    generate_report.final(total_processed,total_transactions,failed_attempts)
+        print("Invalid option. Please enter 1 to 6.")
 
 
-main()
-#generate_report(processed_units(), unit_transactions(), 0)
+if __name__ == "__main__":
+    main()
+

@@ -1,0 +1,11 @@
+[
+    {
+        "id": "1",
+        "name": "Mouse",
+        "price": 10.0,
+        "stock": 10,
+        "transactions": [
+            10
+        ]
+    }
+]
