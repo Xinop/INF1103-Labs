@@ -27,5 +27,14 @@
         "transactions": [
             11
         ]
+    },
+    {
+        "id": "P004",
+        "name": "Cable",
+        "price": 11.5,
+        "stock": 99,
+        "transactions": [
+            99
+        ]
     }
 ]
