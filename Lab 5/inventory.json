@@ -1,11 +1,30 @@
 [
     {
-        "id": "1",
+        "id": "P001",
         "name": "Mouse",
         "price": 10.0,
-        "stock": 10,
+        "stock": 11,
         "transactions": [
-            10
+            10,
+            1
+        ]
+    },
+    {
+        "id": "P002",
+        "name": "Keyboard",
+        "price": 12.0,
+        "stock": 111,
+        "transactions": [
+            111
+        ]
+    },
+    {
+        "id": "P003",
+        "name": "Monitor",
+        "price": 299.99,
+        "stock": 11,
+        "transactions": [
+            11
         ]
     }
 ]
