@@ -1,0 +1,21 @@
+[
+    {
+        "id": "P001",
+        "name": "Laptop",
+        "price": 1200.0,
+        "stock": 15,
+        "transactions": [
+            15
+        ]
+    },
+    {
+        "id": "P002",
+        "name": "Mouse",
+        "price": 25.5,
+        "stock": 42,
+        "transactions": [
+            40,
+            2
+        ]
+    }
+]
