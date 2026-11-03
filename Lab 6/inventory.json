@@ -10,5 +10,11 @@
         "name": "Jerry",
         "price": 4.0,
         "stock": 4
+    },
+    {
+        "id": "P003",
+        "name": "Joey",
+        "price": 0.33,
+        "stock": 2
     }
 ]
