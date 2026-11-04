@@ -62,7 +62,7 @@ if __name__ == "__main__":
 # from Classes.product_digital import DigitalProduct
 
 # physical = PhysicalProduct("P001", "Laptop", 1200.0, 2, 3.0)
-# digital = DigitalProduct("D001", "License", 50.0, 10, 850.0)
+# digital = DigitalProduct("P002", "License", 50.0, 10, 850.0)
 
 # print(physical.get_name)
 # print(digital)

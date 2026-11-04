@@ -46,5 +46,13 @@
         "stock": 2,
         "type": "digital",
         "download_size": 100.0
+    },
+    {
+        "id": "P007",
+        "name": "liscence",
+        "price": 99.0,
+        "stock": 8,
+        "type": "digital",
+        "download_size": 1999.0
     }
 ]
