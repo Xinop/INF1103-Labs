@@ -1,6 +1,7 @@
 import json
-from inventory import Inventory
-from product import Product
+from .inventory import Inventory
+from .product_digital import DigitalProduct
+from .product_physical import PhysicalProduct
 
 
 # =========================================================
@@ -18,19 +19,38 @@ class FileHandler:
             with open(self.__file_name, "r") as file:
                 inventory_data = json.load(file)
 
-            for data in inventory_data:
-                product = Product(
+        except (FileNotFoundError, json.JSONDecodeError):
+            inventory_data = []
+
+            with open(self.__file_name, "w") as file:
+                json.dump(inventory_data, file, indent=4)
+
+        for data in inventory_data:
+            product_type = data.get("type", "physical")
+
+            if product_type == "physical":
+                product = PhysicalProduct(
                     data["id"],
                     data["name"],
                     float(data["price"]),
-                    int(data["stock"])
+                    int(data["stock"]),
+                    float(data.get("weight", 0))
                 )
-
                 inventory.add_product(product)
+                continue
 
-        except (FileNotFoundError, json.JSONDecodeError):
-            with open(self.__file_name, "w") as file:
-                json.dump([], file, indent=4)
+            if product_type == "digital":
+                product = DigitalProduct(
+                    data["id"],
+                    data["name"],
+                    float(data["price"]),
+                    int(data["stock"]),
+                    float(data["download_size"])
+                )
+                inventory.add_product(product)
+                continue
+
+            print(f"Unknown product type: {product_type}")
 
         return inventory
 
@@ -44,4 +64,3 @@ class FileHandler:
             json.dump(inventory_data, file, indent=4)
 
         print(f"Inventory saved successfully to {self.__file_name}.")
-

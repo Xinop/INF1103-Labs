@@ -1,4 +1,6 @@
-from product import Product
+from .product_physical import PhysicalProduct
+from .product_digital import DigitalProduct
+from .can_be_shipped import CanBeShipped
 
 
 # =========================================================
@@ -26,10 +28,12 @@ def search_product(inventory):
 
     print("\nProduct Found")
     print("------------------------------------------")
-    print(f"ID: {product.get_product_id()}")
-    print(f"Name: {product.get_name()}")
-    print(f"Price: ${product.get_price():.2f}")
-    print(f"Stock: {product.get_stock()}")
+    product.display_information()
+    print(f"Fulfilment: {product.get_fulfilment_info()}")
+
+    if isinstance(product, CanBeShipped):
+        print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
+
     print("------------------------------------------")
 
 
@@ -108,7 +112,65 @@ def add_product(inventory):
             print("Invalid stock quantity. Please enter an integer.")
             continue
 
-    product = Product(product_id, product_name, price, stock)
+    # -------------------------
+    # Choose product type
+    # -------------------------
+
+    while True:
+        print("\n1. Physical Product")
+        print("2. Digital Product")
+        product_type = input("Enter Product Type: ").strip()
+
+        if product_type == "1" or product_type == "2":
+            break
+
+        print("Invalid product type. Please enter 1 or 2.")
+
+    if product_type == "1":
+        while True:
+            weight_input = input("Weight (kg): ").strip()
+
+            if not weight_input:
+                print("Weight cannot be empty.")
+                continue
+
+            try:
+                weight = float(weight_input)
+
+                if weight < 0:
+                    print("Weight cannot be negative.")
+                    continue
+
+                break
+
+            except ValueError:
+                print("Invalid weight. Please enter a number.")
+                continue
+
+        product = PhysicalProduct(product_id, product_name, price, stock, weight)
+
+    if product_type == "2":
+        while True:
+            download_input = input("Download Size (MB): ").strip()
+
+            if not download_input:
+                print("Download size cannot be empty.")
+                continue
+
+            try:
+                download_size = float(download_input)
+
+                if download_size < 0:
+                    print("Download size cannot be negative.")
+                    continue
+
+                break
+
+            except ValueError:
+                print("Invalid download size. Please enter a number.")
+                continue
+
+        product = DigitalProduct(product_id, product_name, price, stock, download_size)
 
     if inventory.add_product(product):
         print("\nProduct added successfully!")
@@ -213,4 +275,3 @@ class Menu:
                 break
 
             print("Invalid option. Please enter 1 to 6.")
-
