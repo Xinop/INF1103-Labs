@@ -1,0 +1,25 @@
+digraph G {
+  graph [rankdir=TB, bgcolor="white", pad="0.4", nodesep="0.55", ranksep="0.9", splines=polyline];
+  node [shape=record, style="rounded,filled", fillcolor="#F7FAFC", color="#456078", fontcolor="#162E42", fontname="DejaVu Sans", fontsize=12, margin="0.15,0.12"];
+  edge [color="#526B80", penwidth=1.35, arrowsize=0.85, fontname="DejaVu Sans", fontsize=10];
+  Product [label="{«abstract» Product|− __product_id : str\l− __name : str\l− __price : float\l− __stock : int\l|+ update_stock()\l+ display_information()\l+ get_fulfilment_info()\l+ to_dictionary()\l}", fillcolor="#EAF2FD"];
+  PhysicalProduct [label="{PhysicalProduct|− __weight : float\l|+ get_weight()\l+ display_information()\l+ calculate_shipping_cost()\l+ get_fulfilment_info()\l}"];
+  DigitalProduct [label="{DigitalProduct|− __download_size : float\l|+ get_download_size()\l+ display_information()\l+ get_fulfilment_info()\l}"];
+  SubscriptionProduct [label="{SubscriptionProduct|− __duration_months : int\l|+ get_duration_months()\l+ display_information()\l+ get_fulfilment_info()\l+ to_dictionary()\l}", fillcolor="#EBF7EE", color="#50966B"];
+  CanBeShipped [label="{«interface» CanBeShipped|+ calculate_shipping_cost()\l}", fillcolor="#F4F0FA"];
+  Inventory [label="{Inventory|− __products : list\l|+ add_product()\l+ search_product()\l+ display_all()\l}"];
+  FileHandler [label="{FileHandler|− __file_name : str\l|+ load_inventory()\l+ save_inventory()\l}"];
+  Menu [label="{Menu|+ menu()\l+ run()\l}"];
+  ProductTypes [label="{«module» product_types|+ PRODUCT_TYPES registry\l+ create_product(data)\l}", fillcolor="#FFF4DE"];
+  { rank=same; PhysicalProduct; DigitalProduct; SubscriptionProduct; }
+  Product -> PhysicalProduct [dir=back, arrowtail=empty];
+  Product -> DigitalProduct [dir=back, arrowtail=empty];
+  Product -> SubscriptionProduct [dir=back, arrowtail=empty];
+  CanBeShipped -> PhysicalProduct [style=dashed, dir=back, arrowtail=empty];
+  Inventory -> Product [dir=both, arrowtail=odiamond, arrowhead=none, label=" contains", constraint=false];
+  Menu -> Inventory [label=" uses"];
+  Menu -> FileHandler [label=" saves"];
+  Menu -> ProductTypes [style=dashed,label=" reads options"];
+  FileHandler -> ProductTypes [style=dashed,label=" resolves types"];
+  FileHandler -> Inventory [style=dashed, label=" loads"];
+}
