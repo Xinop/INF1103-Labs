@@ -43,7 +43,7 @@ class OrderFileHandler:
                     supplier = restore_supplier(product_data, suppliers)
                     product = create_product(product_data, supplier)
                     products[product_key] = product
-                # Rebuild lines through their owning Order.
+
                 order.add_order_line(product, line["quantity"])
             orders.append(order)
         return orders

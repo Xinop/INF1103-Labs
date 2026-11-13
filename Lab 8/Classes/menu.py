@@ -2,7 +2,10 @@ from .inventory import Inventory
 from .file_handler_inventory import InventoryFileHandler
 from .file_handler_order import OrderFileHandler
 from .order import Order
-from menu_functions import add_product, display_all, next_id, search_product, update_stock
+from menu_functions import (
+    add_product, display_all, display_orders, next_id, search_order,
+    search_product, update_order, update_stock,
+)
 
 
 # =========================================================
@@ -66,13 +69,20 @@ class Menu:
 
     def menu(self) -> None:
         print("\n---------- MENU ----------")
+        print("===== PRODUCTS =====")
         print("1. Display All Products")
         print("2. Add Product")
         print("3. Update Stock")
         print("4. Search Product")
         print("5. Save Inventory")
-        print("6. Create Order")
-        print("7. Exit")
+        print("--------------------------")
+        print("===== ORDERS =====")
+        print("6. Display All Orders")
+        print("7. Create Order")
+        print("8. Search Order")
+        print("9. Update Order")
+        print("--------------------------")
+        print("10. Exit")
         print("--------------------------")
 
     def run(self) -> None:
@@ -104,10 +114,23 @@ class Menu:
                 continue
 
             if option == "6":
-                self.create_order()
+                display_orders(self.orders)
                 continue
 
             if option == "7":
+                self.create_order()
+                continue
+
+            if option == "8":
+                search_order(self.orders)
+                continue
+
+            if option == "9":
+                if update_order(self.orders, self.inventory):
+                    self.order_file_handler.save_orders(self.orders)
+                continue
+
+            if option == "10":
                 print("\nSaving inventory before exit...")
                 self.inventory_file_handler.save_inventory(self.inventory)
                 self.order_file_handler.save_orders(self.orders)
@@ -116,4 +139,4 @@ class Menu:
                 print("Program terminated.")
                 break
 
-            print("Invalid option. Please enter 1 to 7.")
+            print("Invalid option. Please enter 1 to 10.")

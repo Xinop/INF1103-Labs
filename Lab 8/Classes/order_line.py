@@ -10,14 +10,14 @@ class OrderLine:
         if quantity <= 0:
             raise ValueError("Order quantity must be positive")
 
-        self.__product: Product = product
-        self.__quantity: int = quantity
+        self._product: Product = product
+        self._quantity: int = quantity
 
     def get_product(self) -> Product:
-        return self.__product
+        return self._product
 
     def get_quantity(self) -> int:
-        return self.__quantity
+        return self._quantity
 
     def calculate_subtotal(self) -> float:
-        return self.__product.get_price() * self.__quantity
+        return self._product.get_price() * self._quantity

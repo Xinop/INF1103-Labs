@@ -4,4 +4,4 @@ WORKDIR /app
 
 COPY . /app
 
-CMD ["python", "inventory_manager.py"]
+CMD ["python", "main.py"]

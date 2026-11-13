@@ -128,5 +128,44 @@
         },
         "type": "subscription",
         "duration_months": 33
+    },
+    {
+        "id": "P011",
+        "name": "djd",
+        "price": 992.0,
+        "stock": 33,
+        "supplier": {
+            "supplier_id": "1",
+            "name": "john the ripper",
+            "contact_email": "ripjohn@gmail.com"
+        },
+        "type": "digital",
+        "download_size": 367.0
+    },
+    {
+        "id": "P012",
+        "name": "popo",
+        "price": 22.0,
+        "stock": 2,
+        "supplier": {
+            "supplier_id": "S001",
+            "name": "john the ripper",
+            "contact_email": "ripjohn@gmail.com"
+        },
+        "type": "subscription",
+        "duration_months": 2
+    },
+    {
+        "id": "P013",
+        "name": "jdi",
+        "price": 333.0,
+        "stock": 111,
+        "supplier": {
+            "supplier_id": "S003",
+            "name": "hilly",
+            "contact_email": "1@gmail.com"
+        },
+        "type": "physical",
+        "weight": 111.0
     }
 ]

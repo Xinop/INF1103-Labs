@@ -1,32 +1,21 @@
-from collections.abc import Callable
-from typing import Protocol, cast
-
 from Classes.file_handler_inventory import InventoryFileHandler
 from Classes.file_handler_order import OrderFileHandler
 from Classes.inventory import Inventory
 from Classes.menu import Menu
 
-inventory_file: str = "inventory.json"
-
-
-class InventoryLoader(Protocol):
-    """A callable inventory loader with a startup display operation."""
-
-    start: Callable[[], Inventory]
-
-    def __call__(self) -> Inventory: ...
+INVENTORY_FILE = "inventory.json"
 
 
 # =========================================================
 # LOAD INVENTORY DECORATOR
 # =========================================================
 
-def load_inventory_decorator(func: Callable[[], Inventory]) -> InventoryLoader:
-    def wrapper() -> Inventory:
+def load_inventory_decorator(func):
+    def wrapper():
         inventory = func()
         return inventory
 
-    def start() -> Inventory:
+    def start():
         inventory = func()
 
         print("========================================")
@@ -36,17 +25,16 @@ def load_inventory_decorator(func: Callable[[], Inventory]) -> InventoryLoader:
         if len(inventory.get_products()) == 0:
             print("(No previous inventory found)")
         else:
-            print(f"{inventory_file} found.")
+            print(f"{INVENTORY_FILE} found.")
             print("Inventory loaded successfully.")
 
         return inventory
 
-    loader = cast(InventoryLoader, wrapper)
-    loader.start = start
+    wrapper.start = start
 
-    return loader
+    return wrapper
 
-inventory_file_handler = InventoryFileHandler(inventory_file)
+inventory_file_handler = InventoryFileHandler(INVENTORY_FILE)
 order_file_handler = OrderFileHandler("orders.json")
 
 

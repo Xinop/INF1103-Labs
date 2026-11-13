@@ -38,12 +38,26 @@ class Order:
 
         return total
 
+    def update_order_line(self, line_number: int, quantity: int) -> None:
+        if not 1 <= line_number <= len(self.__order_lines):
+            raise ValueError("Order line number not found")
+        if quantity < 0:
+            raise ValueError("Quantity cannot be negative")
+
+        index = line_number - 1
+        if quantity == 0:
+            self.__order_lines.pop(index)
+        else:
+            product = self.__order_lines[index].get_product()
+            self.__order_lines[index] = OrderLine(product, quantity)
+
     def display_information(self) -> None:
         print(f"\n===== Order: {self.__order_id} =====")
 
-        for order_line in self.__order_lines:
+        for number, order_line in enumerate(self.__order_lines, start=1):
             product = order_line.get_product()
-            print(f"{product.get_name()} | Qty: {order_line.get_quantity()} "
+            print(f"{number}. {product.get_product_id()} | {product.get_name()} "
+                  f"| Qty: {order_line.get_quantity()} "
                   f"| Subtotal: ${order_line.calculate_subtotal():.2f}")
 
         print(f"Total: ${self.calculate_total():.2f}")

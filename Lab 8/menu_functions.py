@@ -14,6 +14,86 @@ def display_all(inventory: Inventory) -> None:
     inventory.display_all()
 
 
+def display_orders(orders: list[Order]) -> None:
+    if not orders:
+        print("\nNo orders found.")
+        return
+    for order in orders:
+        order.display_information()
+
+
+def find_order(orders: list[Order], order_id: str) -> Order | None:
+    for order in orders:
+        if order.get_order_id().casefold() == order_id.casefold():
+            return order
+    return None
+
+
+def search_order(orders: list[Order]) -> None:
+    order_id = input("Enter Order ID: ").strip()
+    order = find_order(orders, order_id)
+    if order is None:
+        print("\nOrder not found.")
+        return
+    order.display_information()
+
+
+def update_order(orders: list[Order], inventory: Inventory) -> bool:
+    """Return whether an order changed so the menu can save it."""
+    order_id = input("Enter Order ID: ").strip()
+    order = find_order(orders, order_id)
+    if order is None:
+        print("\nOrder not found.")
+        return False
+
+    changed = False
+    while True:
+        order.display_information()
+        print("Enter a line number to change its quantity or remove it.")
+        selection = input("Line number (0 to add a product, blank to finish): ").strip()
+        if not selection:
+            return changed
+        try:
+            line_number = int(selection)
+        except ValueError:
+            print("Please enter a valid line number.")
+            continue
+        if not 0 <= line_number <= len(order.get_order_lines()):
+            print("Order line number not found.")
+            continue
+
+        product = None
+        if line_number == 0:
+            inventory.display_all()
+            product_id = input("Product ID (blank to cancel): ").strip()
+            if not product_id:
+                continue
+            product = inventory.find_product(product_id)
+            if product is None:
+                print("Product not found.")
+                continue
+
+        while True:
+            prompt = "Quantity: " if line_number == 0 else "New quantity (0 to remove line): "
+            try:
+                quantity = int(input(prompt).strip())
+                if quantity < 0 or (line_number == 0 and quantity == 0):
+                    print("Enter a positive quantity." if line_number == 0
+                          else "Quantity cannot be negative.")
+                    continue
+                break
+            except ValueError:
+                print("Please enter a whole number.")
+
+        if line_number == 0:
+            assert product is not None
+            order.add_order_line(product, quantity)
+        else:
+            order.update_order_line(line_number, quantity)
+        changed = True
+        print("\nOrder updated successfully!")
+
+
 # =========================================================
 # SEARCH PRODUCT
 # =========================================================
@@ -64,6 +144,71 @@ def next_id(prefix: str, existing_ids: list[str]) -> str:
 
 
 def get_supplier_input(inventory: Inventory, orders: list[Order] | None = None) -> Supplier:
+    suppliers_by_id: dict[str, Supplier] = {}
+    for product in get_known_products(inventory, orders):
+        supplier = product.get_supplier()
+        suppliers_by_id[supplier.get_supplier_id().casefold()] = supplier
+    suppliers = list(suppliers_by_id.values())
+
+    while True:
+        print("\nSupplier")
+        print("1. Search by ID")
+        print("2. Search by Name")
+        print("3. Search by Email")
+        print("4. Add New Supplier")
+        option = input("Enter option: ").strip()
+
+        if option == "4":
+            break
+        if option not in ("1", "2", "3"):
+            print("Invalid option. Please enter 1 to 4.")
+            continue
+
+        label = {"1": "ID", "2": "Name", "3": "Email"}[option]
+        query = input(f"Supplier {label}: ").strip().casefold()
+        if not query:
+            print("Search cannot be empty.")
+            continue
+
+        matches: list[Supplier] = []
+        for supplier in suppliers:
+            if option == "1":
+                matched = supplier.get_supplier_id().casefold() == query
+            elif option == "2":
+                matched = query in supplier.get_name().casefold()
+            else:
+                matched = query in supplier.get_contact_email().casefold()
+            if matched:
+                matches.append(supplier)
+
+        if not matches:
+            print("Supplier not found. Try another search or add a new supplier.")
+            continue
+
+        for number, supplier in enumerate(matches, start=1):
+            print(f"{number}. {supplier.get_supplier_id()} | {supplier.get_name()} "
+                  f"| {supplier.get_contact_email()}")
+
+        if len(matches) == 1:
+            supplier = matches[0]
+        else:
+            while True:
+                selection = input("Select supplier number (blank to search again): ").strip()
+                if not selection:
+                    break
+                try:
+                    number = int(selection)
+                    if 1 <= number <= len(matches):
+                        break
+                except ValueError:
+                    pass
+                print("Please select a listed supplier number.")
+            if not selection:
+                continue
+            supplier = matches[number - 1]
+
+        print(f"Using existing supplier: {supplier.get_name()} ({supplier.get_supplier_id()})")
+        return supplier
 
     while True:
         supplier_name = input("Supplier Name: ").strip()
@@ -81,7 +226,6 @@ def get_supplier_input(inventory: Inventory, orders: list[Order] | None = None) 
 
         print("Please enter a valid supplier contact email.")
 
-    suppliers = [product.get_supplier() for product in get_known_products(inventory, orders)]
     for supplier in suppliers:
         if (supplier.get_name().casefold() == supplier_name.casefold()
                 and supplier.get_contact_email().casefold() == contact_email.casefold()):
