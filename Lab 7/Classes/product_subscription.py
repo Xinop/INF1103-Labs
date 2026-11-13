@@ -2,7 +2,7 @@ from .product import Product
 
 
 # =========================================================
-# SUBSCRIPTION PRODUCT CLASS (OPTIONAL LAB 7 CHALLENGE)
+# SUBSCRIPTION PRODUCT CLASS
 # =========================================================
 
 class SubscriptionProduct(Product):
