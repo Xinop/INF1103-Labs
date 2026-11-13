@@ -23,7 +23,6 @@ class Inventory:
 
         return None
 
-    # Retain the old method name for the existing menu.
     def search_product(self, product_id: str) -> Product | None:
         return self.find_product(product_id)
 

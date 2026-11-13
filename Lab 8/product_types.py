@@ -8,7 +8,7 @@ from Classes.supplier import Supplier
 # =========================================================
 # PRODUCT TYPE REGISTRY
 # Add new types here without changing Product, Inventory,
-# FileHandler, or Menu.
+# the file handlers, or Menu.
 # =========================================================
 
 PRODUCT_TYPES = {
@@ -71,3 +71,30 @@ def create_product(data: dict, supplier: Supplier) -> Product:
         extra_value,
         supplier
     )
+
+
+def restore_supplier(data: dict, suppliers: dict[str, Supplier]) -> Supplier:
+    supplier_data = data.get("supplier")
+
+    if supplier_data is None:
+        # Legacy files contain no supplier information.
+        supplier_data = {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        }
+
+    supplier_id = supplier_data["supplier_id"]
+    supplier_key = supplier_id.lower()
+    supplier = suppliers.get(supplier_key)
+
+    if supplier is None:
+        supplier = Supplier(
+            supplier_id,
+            supplier_data["name"],
+            supplier_data["contact_email"]
+        )
+        suppliers[supplier_key] = supplier
+
+    return supplier
+

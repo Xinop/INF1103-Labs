@@ -1,41 +1,14 @@
 import json
 from .inventory import Inventory
 from .supplier import Supplier
-from product_types import create_product
+from product_types import create_product, restore_supplier
 
 
-# =========================================================
-# FILE HANDLING CLASS
-# =========================================================
+class InventoryFileHandler:
+    """Load and save the inventory file."""
 
-class FileHandler:
     def __init__(self, file_name: str) -> None:
         self.__file_name: str = file_name
-
-    def get_supplier(self, data: dict, suppliers: dict[str, Supplier]) -> Supplier:
-        supplier_data = data.get("supplier")
-
-        if supplier_data is None:
-            # Legacy files contain no supplier information.
-            supplier_data = {
-                "supplier_id": "UNASSIGNED",
-                "name": "Unassigned (legacy product)",
-                "contact_email": ""
-            }
-
-        supplier_id = supplier_data["supplier_id"]
-        supplier_key = supplier_id.lower()
-        supplier = suppliers.get(supplier_key)
-
-        if supplier is None:
-            supplier = Supplier(
-                supplier_id,
-                supplier_data["name"],
-                supplier_data["contact_email"]
-            )
-            suppliers[supplier_key] = supplier
-
-        return supplier
 
     def load_inventory(self) -> Inventory:
         inventory = Inventory()
@@ -59,7 +32,7 @@ class FileHandler:
 
         for data in inventory_data:
             try:
-                supplier = self.get_supplier(data, suppliers)
+                supplier = restore_supplier(data, suppliers)
                 product = create_product(data, supplier)
                 inventory.add_product(product)
 
@@ -69,7 +42,7 @@ class FileHandler:
         return inventory
 
     def save_inventory(self, inventory: Inventory) -> None:
-        inventory_data = []
+        inventory_data: list[dict[str, object]] = []
 
         for product in inventory.get_products():
             inventory_data.append(product.to_dictionary())

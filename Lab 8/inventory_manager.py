@@ -1,19 +1,32 @@
-from Classes.file_handler import FileHandler
+from collections.abc import Callable
+from typing import Protocol, cast
+
+from Classes.file_handler_inventory import InventoryFileHandler
+from Classes.file_handler_order import OrderFileHandler
+from Classes.inventory import Inventory
 from Classes.menu import Menu
 
-inventory_file = "inventory.json"
+inventory_file: str = "inventory.json"
+
+
+class InventoryLoader(Protocol):
+    """A callable inventory loader with a startup display operation."""
+
+    start: Callable[[], Inventory]
+
+    def __call__(self) -> Inventory: ...
 
 
 # =========================================================
 # LOAD INVENTORY DECORATOR
 # =========================================================
 
-def load_inventory_decorator(func):
-    def wrapper():
+def load_inventory_decorator(func: Callable[[], Inventory]) -> InventoryLoader:
+    def wrapper() -> Inventory:
         inventory = func()
         return inventory
 
-    def start():
+    def start() -> Inventory:
         inventory = func()
 
         print("========================================")
@@ -28,11 +41,13 @@ def load_inventory_decorator(func):
 
         return inventory
 
-    wrapper.start = start
+    loader = cast(InventoryLoader, wrapper)
+    loader.start = start
 
-    return wrapper
+    return loader
 
-file_handler = FileHandler(inventory_file)
+inventory_file_handler = InventoryFileHandler(inventory_file)
+order_file_handler = OrderFileHandler("orders.json")
 
 
 # =========================================================
@@ -40,17 +55,17 @@ file_handler = FileHandler(inventory_file)
 # =========================================================
 
 @load_inventory_decorator
-def load_inventory():
-    return file_handler.load_inventory()
+def load_inventory() -> Inventory:
+    return inventory_file_handler.load_inventory()
 
 
 # =========================================================
 # MAIN
 # =========================================================
 
-def main():
+def main() -> None:
     inventory = load_inventory.start()
-    menu = Menu(inventory, file_handler)
+    menu = Menu(inventory, inventory_file_handler, order_file_handler)
     menu.run()
 
 

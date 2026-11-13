@@ -1,255 +1,8 @@
-from .can_be_shipped import CanBeShipped
-from product_types import PRODUCT_TYPES
-from .supplier import Supplier
 from .inventory import Inventory
-from .file_handler import FileHandler
-
-
-# =========================================================
-# DISPLAY ALL PRODUCTS
-# =========================================================
-
-def display_all(inventory: Inventory) -> None:
-    inventory.display_all()
-
-
-# =========================================================
-# SEARCH PRODUCT
-# =========================================================
-
-def search_product(inventory: Inventory) -> None:
-    print("\nSearch Product")
-
-    product_id = input("Enter Product ID: ").strip()
-
-    product = inventory.search_product(product_id)
-
-    if product is None:
-        print("\nProduct not found.")
-        return
-
-    print("\nProduct Found")
-    print("------------------------------------------")
-    product.display_information()
-    product.display_supplier_information()
-    print(f"Fulfilment: {product.get_fulfilment_info()}")
-
-    if isinstance(product, CanBeShipped):
-        print(f"Shipping Cost: ${product.calculate_shipping_cost():.2f}")
-
-    print("------------------------------------------")
-
-
-# =========================================================
-# GET SUPPLIER (ASSOCIATION)
-# =========================================================
-
-def get_supplier_input(inventory: Inventory) -> Supplier:
-    while True:
-        supplier_id = input("Supplier ID: ").strip()
-
-        if not supplier_id:
-            print("Supplier ID cannot be empty.")
-            continue
-
-        break
-
-    supplier = next(
-        (product.get_supplier() for product in inventory.get_products()
-         if product.get_supplier().get_supplier_id().lower() == supplier_id.lower()),
-        None
-    )
-
-    if supplier is not None:
-        print(f"Using existing supplier: {supplier.get_name()}")
-        return supplier
-
-    while True:
-        supplier_name = input("Supplier Name: ").strip()
-
-        if supplier_name:
-            break
-
-        print("Supplier Name cannot be empty.")
-
-    while True:
-        contact_email = input("Supplier Contact Email: ").strip()
-
-        if contact_email and "@" in contact_email:
-            break
-
-        print("Please enter a valid supplier contact email.")
-
-    return Supplier(supplier_id, supplier_name, contact_email)
-
-
-# =========================================================
-# ADD PRODUCT
-# =========================================================
-
-def add_product(inventory: Inventory) -> None:
-    invalid_characters = "[](),"
-
-    print("\nAdd New Product")
-
-    while True:
-        product_id = input("Product ID: ").strip()
-
-        if not product_id:
-            print("Product ID cannot be empty.")
-            continue
-
-        if inventory.search_product(product_id) is not None:
-            print("Product ID already exists.")
-            continue
-
-        break
-
-    while True:
-        product_name = input("Product Name: ").strip()
-
-        if not product_name:
-            print("Product Name cannot be empty.")
-            continue
-
-        if any(char in product_name for char in invalid_characters):
-            print("Product name contains invalid characters.")
-            continue
-
-        break
-
-    while True:
-        price_input = input("Price: ").strip()
-
-        if not price_input:
-            print("Price cannot be empty.")
-            continue
-
-        try:
-            price = float(price_input)
-
-            if price < 0:
-                print("Price cannot be negative.")
-                continue
-
-            break
-
-        except ValueError:
-            print("Invalid price. Please enter a number.")
-            continue
-
-    while True:
-        stock_input = input("Stock Quantity: ").strip()
-
-        if not stock_input:
-            print("Stock cannot be empty.")
-            continue
-
-        try:
-            stock = int(stock_input)
-
-            if stock < 0:
-                print("Stock cannot be negative.")
-                continue
-
-            break
-
-        except ValueError:
-            print("Invalid stock quantity. Please enter an integer.")
-            continue
-
-    # -------------------------
-    # Choose product type
-    # -------------------------
-
-    while True:
-        print()
-        for product_info in PRODUCT_TYPES.values():
-            print(f"{product_info['option']}. {product_info['label']}")
-
-        product_type = input("Enter Product Type: ").strip()
-        selected_type = next(
-            (info for info in PRODUCT_TYPES.values() if info["option"] == product_type),
-            None
-        )
-
-        if selected_type is not None:
-            break
-
-        print("Invalid product type. Please select a listed option.")
-
-    while True:
-        extra_input = input(selected_type["prompt"]).strip()
-
-        if not extra_input:
-            print("This field cannot be empty.")
-            continue
-
-        try:
-            extra_value = selected_type["convert"](extra_input)
-
-            if extra_value < selected_type["minimum"]:
-                print("Value must be at least " + str(selected_type["minimum"]) + ".")
-                continue
-
-            break
-
-        except ValueError:
-            print("Invalid input. Please enter a valid number.")
-            continue
-
-    supplier = get_supplier_input(inventory)
-
-    product = selected_type["class"](
-        product_id, product_name, price, stock, extra_value, supplier
-    )
-
-    if inventory.add_product(product):
-        print("\nProduct added successfully!")
-
-
-# =========================================================
-# UPDATE STOCK
-# =========================================================
-
-def update_stock(inventory: Inventory) -> None:
-    print("\nUpdate Stock")
-
-    product_id = input("Enter Product ID: ").strip()
-
-    product = inventory.search_product(product_id)
-
-    if product is None:
-        print("\nProduct not found.")
-        return
-
-    print("\nProduct Found:")
-    print(f"Name: {product.get_name()}")
-    print(f"Current Stock: {product.get_stock()}")
-
-    while True:
-        stock_input = input("\nNew Stock Quantity: ").strip()
-
-        if not stock_input:
-            print("Stock cannot be empty.")
-            continue
-
-        try:
-            quantity = int(stock_input)
-
-            if quantity < 0:
-                print("Stock cannot be negative.")
-                continue
-
-            break
-
-        except ValueError:
-            print("Invalid stock quantity. Please enter an integer.")
-            continue
-
-    product.update_stock(quantity)
-
-    print("\nStock updated successfully!")
+from .file_handler_inventory import InventoryFileHandler
+from .file_handler_order import OrderFileHandler
+from .order import Order
+from menu_functions import add_product, display_all, next_id, search_product, update_stock
 
 
 # =========================================================
@@ -257,9 +10,59 @@ def update_stock(inventory: Inventory) -> None:
 # =========================================================
 
 class Menu:
-    def __init__(self, inventory: Inventory, file_handler: FileHandler) -> None:
+    def __init__(self, inventory: Inventory,
+                 inventory_file_handler: InventoryFileHandler,
+                 order_file_handler: OrderFileHandler) -> None:
         self.inventory: Inventory = inventory
-        self.file_handler: FileHandler = file_handler
+        self.inventory_file_handler: InventoryFileHandler = inventory_file_handler
+        self.order_file_handler: OrderFileHandler = order_file_handler
+        self.orders: list[Order] = self.order_file_handler.load_orders(inventory)
+
+    def create_order(self) -> None:
+        if not self.inventory.get_products():
+            print("\nAdd products to the inventory before creating an order.")
+            return
+
+        print("\nCreate Order")
+
+        order_id = next_id("O", [order.get_order_id() for order in self.orders])
+        print(f"Assigned Order ID: {order_id}")
+
+        order = Order(order_id)
+        self.inventory.display_all()
+
+        while True:
+            product_id = input("Product ID (blank to finish): ").strip()
+            if not product_id:
+                break
+
+            product = self.inventory.find_product(product_id)
+            if product is None:
+                print("Product not found.")
+                continue
+
+            while True:
+                try:
+                    quantity = int(input("Quantity: ").strip())
+                    if quantity <= 0:
+                        print("Quantity must be a positive integer.")
+                        continue
+                    break
+                except ValueError:
+                    print("Quantity must be a positive integer.")
+
+            # The Order creates and owns its OrderLine objects.
+            order.add_order_line(product, quantity)
+            print(f"Added {quantity} x {product.get_name()}.")
+
+        if not order.get_order_lines():
+            print("Order cancelled: no products were added.")
+            return
+
+        self.orders.append(order)
+        self.order_file_handler.save_orders(self.orders)
+        print("\nOrder created successfully!")
+        order.display_information()
 
     def menu(self) -> None:
         print("\n---------- MENU ----------")
@@ -268,7 +71,8 @@ class Menu:
         print("3. Update Stock")
         print("4. Search Product")
         print("5. Save Inventory")
-        print("6. Exit")
+        print("6. Create Order")
+        print("7. Exit")
         print("--------------------------")
 
     def run(self) -> None:
@@ -282,7 +86,7 @@ class Menu:
                 continue
 
             if option == "2":
-                add_product(self.inventory)
+                add_product(self.inventory, self.orders)
                 continue
 
             if option == "3":
@@ -295,15 +99,21 @@ class Menu:
 
             if option == "5":
                 print("\nSaving inventory...")
-                self.file_handler.save_inventory(self.inventory)
+                self.inventory_file_handler.save_inventory(self.inventory)
+                self.order_file_handler.save_orders(self.orders)
                 continue
 
             if option == "6":
+                self.create_order()
+                continue
+
+            if option == "7":
                 print("\nSaving inventory before exit...")
-                self.file_handler.save_inventory(self.inventory)
+                self.inventory_file_handler.save_inventory(self.inventory)
+                self.order_file_handler.save_orders(self.orders)
 
                 print("\nThank you for using Inventory Management System.")
                 print("Program terminated.")
                 break
 
-            print("Invalid option. Please enter 1 to 6.")
+            print("Invalid option. Please enter 1 to 7.")

@@ -109,11 +109,24 @@
         "price": 10.0,
         "stock": 11,
         "supplier": {
-            "supplier_id": "1",
+            "supplier_id": "S001",
             "name": "john the ripper",
             "contact_email": "ripjohn@gmail.com"
         },
         "type": "digital",
         "download_size": 99991.0
+    },
+    {
+        "id": "P010",
+        "name": "jvijd",
+        "price": 29.0,
+        "stock": 33,
+        "supplier": {
+            "supplier_id": "S002",
+            "name": "poli",
+            "contact_email": "olip@gmail.com"
+        },
+        "type": "subscription",
+        "duration_months": 33
     }
 ]
