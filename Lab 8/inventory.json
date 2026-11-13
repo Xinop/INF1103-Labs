@@ -1,0 +1,119 @@
+[
+    {
+        "id": "P001",
+        "name": "John",
+        "price": 3.0,
+        "stock": 4,
+        "supplier": {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        },
+        "type": "physical",
+        "weight": 0.0
+    },
+    {
+        "id": "P002",
+        "name": "Jerry",
+        "price": 4.0,
+        "stock": 4,
+        "supplier": {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        },
+        "type": "physical",
+        "weight": 0.0
+    },
+    {
+        "id": "P003",
+        "name": "Joey",
+        "price": 0.33,
+        "stock": 1,
+        "supplier": {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        },
+        "type": "physical",
+        "weight": 0.0
+    },
+    {
+        "id": "P004",
+        "name": "Harry",
+        "price": 9.0,
+        "stock": 1,
+        "supplier": {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        },
+        "type": "physical",
+        "weight": 0.0
+    },
+    {
+        "id": "P005",
+        "name": "Lorry",
+        "price": 5.0,
+        "stock": 1,
+        "supplier": {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        },
+        "type": "physical",
+        "weight": 10.0
+    },
+    {
+        "id": "P006",
+        "name": "joey",
+        "price": 8.0,
+        "stock": 2,
+        "supplier": {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        },
+        "type": "digital",
+        "download_size": 100.0
+    },
+    {
+        "id": "P007",
+        "name": "license",
+        "price": 99.0,
+        "stock": 8,
+        "supplier": {
+            "supplier_id": "UNASSIGNED",
+            "name": "Unassigned (legacy product)",
+            "contact_email": ""
+        },
+        "type": "digital",
+        "download_size": 1999.0
+    },
+    {
+        "id": "P008",
+        "name": "garry",
+        "price": 4.0,
+        "stock": 1,
+        "supplier": {
+            "supplier_id": "1",
+            "name": "john the ripper",
+            "contact_email": "ripjohn@gmail.com"
+        },
+        "type": "physical",
+        "weight": 9.0
+    },
+    {
+        "id": "P009",
+        "name": "k license",
+        "price": 10.0,
+        "stock": 11,
+        "supplier": {
+            "supplier_id": "1",
+            "name": "john the ripper",
+            "contact_email": "ripjohn@gmail.com"
+        },
+        "type": "digital",
+        "download_size": 99991.0
+    }
+]
