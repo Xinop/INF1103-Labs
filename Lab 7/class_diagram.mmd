@@ -1,0 +1,71 @@
+classDiagram
+  class Product {
+    <<abstract>>
+    -__product_id : str
+    -__name : str
+    -__price : float
+    -__stock : int
+    +update_stock(quantity)
+    +display_information()
+    +to_dictionary()
+    +get_fulfilment_info()*
+  }
+  class PhysicalProduct {
+    -__weight : float
+    +get_weight()
+    +display_information()
+    +get_fulfilment_info()
+    +calculate_shipping_cost()
+    +to_dictionary()
+  }
+  class DigitalProduct {
+    -__download_size : float
+    +get_download_size()
+    +display_information()
+    +get_fulfilment_info()
+    +to_dictionary()
+  }
+  class SubscriptionProduct {
+    -__duration_months : int
+    +get_duration_months()
+    +display_information()
+    +get_fulfilment_info()
+    +to_dictionary()
+  }
+  class CanBeShipped {
+    <<interface>>
+    +calculate_shipping_cost()*
+  }
+  class Inventory {
+    -__products : list
+    +add_product(product)
+    +search_product(product_id)
+    +display_all()
+    +get_products()
+  }
+  class FileHandler {
+    -__file_name : str
+    +load_inventory()
+    +save_inventory(inventory)
+  }
+  class Menu {
+    +inventory : Inventory
+    +file_handler : FileHandler
+    +menu()
+    +run()
+  }
+  class ProductTypes {
+    <<registry module>>
+    +PRODUCT_TYPES
+    +create_product(data)
+  }
+  Product <|-- PhysicalProduct
+  Product <|-- DigitalProduct
+  Product <|-- SubscriptionProduct
+  CanBeShipped <|.. PhysicalProduct
+  Inventory o-- Product : contains
+  Menu --> Inventory : uses
+  Menu --> FileHandler : saves
+  Menu ..> ProductTypes : type selection
+  FileHandler ..> ProductTypes : restores type
+  FileHandler --> Inventory : creates

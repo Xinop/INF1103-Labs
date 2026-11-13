@@ -1,7 +1,6 @@
 import json
 from .inventory import Inventory
-from .product_digital import DigitalProduct
-from .product_physical import PhysicalProduct
+from .product_types import create_product
 
 
 # =========================================================
@@ -25,32 +24,17 @@ class FileHandler:
             with open(self.__file_name, "w") as file:
                 json.dump(inventory_data, file, indent=4)
 
+        if not isinstance(inventory_data, list):
+            print("Invalid inventory format: expected a list of products.")
+            return inventory
+
         for data in inventory_data:
-            product_type = data.get("type", "physical")
-
-            if product_type == "physical":
-                product = PhysicalProduct(
-                    data["id"],
-                    data["name"],
-                    float(data["price"]),
-                    int(data["stock"]),
-                    float(data.get("weight", 0))
-                )
+            try:
+                product = create_product(data)
                 inventory.add_product(product)
-                continue
 
-            if product_type == "digital":
-                product = DigitalProduct(
-                    data["id"],
-                    data["name"],
-                    float(data["price"]),
-                    int(data["stock"]),
-                    float(data["download_size"])
-                )
-                inventory.add_product(product)
-                continue
-
-            print(f"Unknown product type: {product_type}")
+            except (ValueError, KeyError, TypeError) as error:
+                print(f"Invalid inventory record skipped: {error}")
 
         return inventory
 
