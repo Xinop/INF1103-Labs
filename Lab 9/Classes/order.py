@@ -9,32 +9,32 @@ from .order_line import OrderLine
 # =========================================================
 
 class Order:
-    def __init__(self, order_id: str,
-                 discount: DiscountStrategy | None = None) -> None:
+    def __init__(self, order_id: str, discount: DiscountStrategy | None = None):
         self.__order_id: str = order_id
         self.__order_lines: list[OrderLine] = []
-        self.__discount: DiscountStrategy = (
-            NoDiscount() if discount is None else discount
-        )
+        if discount is None:
+            self.__discount: DiscountStrategy = NoDiscount()
+        else:
+            self.__discount = discount
 
-    def set_discount(self, discount: DiscountStrategy) -> None:
+    def set_discount(self, discount: DiscountStrategy):
         self.__discount = discount
 
-    def get_discount(self) -> DiscountStrategy:
+    def get_discount(self):
         return self.__discount
 
-    def get_order_id(self) -> str:
+    def get_order_id(self):
         return self.__order_id
 
-    def get_order_lines(self) -> tuple[OrderLine, ...]:
+    def get_order_lines(self):
         return tuple(self.__order_lines)
 
-    def add_order_line(self, product: Product, quantity: int) -> None:
+    def add_order_line(self, product: Product, quantity: int):
         # Order creates each OrderLine: the caller only supplies a Product.
         order_line = OrderLine(product, quantity)
         self.__order_lines.append(order_line)
 
-    def remove_order_line(self, product_id: str) -> bool:
+    def remove_order_line(self, product_id: str):
         for order_line in self.__order_lines:
             if order_line.get_product().get_product_id() == product_id:
                 self.__order_lines.remove(order_line)
@@ -42,7 +42,7 @@ class Order:
 
         return False
 
-    def calculate_total(self) -> float:
+    def calculate_total(self):
         total = 0.0
 
         for order_line in self.__order_lines:
@@ -50,7 +50,7 @@ class Order:
 
         return self.__discount.apply(total)
 
-    def update_order_line(self, line_number: int, quantity: int) -> None:
+    def update_order_line(self, line_number: int, quantity: int):
         if not 1 <= line_number <= len(self.__order_lines):
             raise ValueError("Order line number not found")
         if quantity < 0:
@@ -63,7 +63,7 @@ class Order:
             product = self.__order_lines[index].get_product()
             self.__order_lines[index] = OrderLine(product, quantity)
 
-    def display_information(self) -> None:
+    def display_information(self):
         print(f"\n===== Order: {self.__order_id} =====")
 
         for number, order_line in enumerate(self.__order_lines, start=1):
