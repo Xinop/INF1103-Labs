@@ -43,7 +43,7 @@ order_file_handler = OrderFileHandler("orders.json")
 # =========================================================
 
 @load_inventory_decorator
-def load_inventory() -> Inventory:
+def load_inventory():
     return inventory_file_handler.load_inventory()
 
 
@@ -51,7 +51,7 @@ def load_inventory() -> Inventory:
 # MAIN
 # =========================================================
 
-def main() -> None:
+def main():
     inventory = load_inventory.start()
     menu = Menu(inventory, inventory_file_handler, order_file_handler)
     menu.run()
@@ -80,3 +80,19 @@ if __name__ == "__main__":
 # print(digital.get_fulfilment_info())
 
 # print(physical.calculate_shipping_cost())
+
+
+#3.2
+# from Classes.product_factory import ProductFactory
+# from Classes.supplier import Supplier
+
+# supplier = Supplier("S001", "Test Supplier", "test@example.com")
+
+# print("Before factory call")
+
+# product = ProductFactory.create(
+#     "service", "P001", "Installation", 30.0, 5, supplier
+# )
+
+# print("After factory call")
+

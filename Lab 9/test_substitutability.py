@@ -1,20 +1,19 @@
 from Classes.inventory import Inventory
 from Classes.product import Product
-from Classes.product_digital import DigitalProduct
-from Classes.product_physical import PhysicalProduct
+from Classes.product_factory import ProductFactory
 from Classes.supplier import Supplier
 
 
-def show_product_details(product: Product) -> None:
+def show_product_details(product: Product):
     """Use the same Product operations for either subclass."""
     product.display_information()
     print(product.get_fulfilment_info())
 
 
-def test_substitutability() -> None:
+def test_substitutability():
     supplier = Supplier("S001", "Tech Supplier", "sales@example.com")
-    physical = PhysicalProduct("P001", "Laptop", 1200.0, 5, 2.5, supplier)
-    digital = DigitalProduct("D001", "Software Licence", 50.0, 10, 850.0, supplier)
+    physical = ProductFactory.create("physical", "P001", "Laptop", 1200.0, 5, supplier, weight=2.5)
+    digital = ProductFactory.create("digital", "D001", "Software Licence", 50.0, 10, supplier, download_size=850.0)
 
     print("=== Same function, two Product subclasses ===")
     show_product_details(physical)

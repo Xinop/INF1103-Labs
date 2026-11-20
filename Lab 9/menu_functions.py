@@ -4,17 +4,24 @@ from Classes.inventory import Inventory
 from Classes.order import Order
 from Classes.product import Product
 from product_types import PRODUCT_TYPES
+from Classes.product_factory import ProductFactory
+from Classes.discount_strategy import DiscountStrategy
+from Classes.discount_none import NoDiscount
+from Classes.discount_percentage import PercentageDiscount
+from Classes.discount_bulk import BulkDiscount
+from Classes.discount_student import StudentDiscount
+from math import isfinite
 
 
 # =========================================================
 # DISPLAY ALL PRODUCTS
 # =========================================================
 
-def display_all(inventory: Inventory) -> None:
+def display_all(inventory: Inventory):
     inventory.display_all()
 
 
-def display_orders(orders: list[Order]) -> None:
+def display_orders(orders: list[Order]):
     if not orders:
         print("\nNo orders found.")
         return
@@ -22,14 +29,14 @@ def display_orders(orders: list[Order]) -> None:
         order.display_information()
 
 
-def find_order(orders: list[Order], order_id: str) -> Order | None:
+def find_order(orders: list[Order], order_id: str):
     for order in orders:
         if order.get_order_id().casefold() == order_id.casefold():
             return order
     return None
 
 
-def search_order(orders: list[Order]) -> None:
+def search_order(orders: list[Order]):
     order_id = input("Enter Order ID: ").strip()
     order = find_order(orders, order_id)
     if order is None:
@@ -38,7 +45,7 @@ def search_order(orders: list[Order]) -> None:
     order.display_information()
 
 
-def update_order(orders: list[Order], inventory: Inventory) -> bool:
+def update_order(orders: list[Order], inventory: Inventory):
     """Return whether an order changed so the menu can save it."""
     order_id = input("Enter Order ID: ").strip()
     order = find_order(orders, order_id)
@@ -50,7 +57,11 @@ def update_order(orders: list[Order], inventory: Inventory) -> bool:
     while True:
         order.display_information()
         print("Enter a line number to change its quantity or remove it.")
-        selection = input("Line number (0 to add a product, blank to finish): ").strip()
+        selection = input("Line number (0 to add, d for discount, blank to finish): ").strip()
+        if selection.lower() == "d":
+            order.set_discount(get_discount_input())
+            changed = True
+            continue
         if not selection:
             return changed
         try:
@@ -98,7 +109,7 @@ def update_order(orders: list[Order], inventory: Inventory) -> bool:
 # SEARCH PRODUCT
 # =========================================================
 
-def search_product(inventory: Inventory) -> None:
+def search_product(inventory: Inventory):
     print("\nSearch Product")
 
     product_id = input("Enter Product ID: ").strip()
@@ -125,14 +136,14 @@ def search_product(inventory: Inventory) -> None:
 # GET SUPPLIER (ASSOCIATION)
 # =========================================================
 
-def get_known_products(inventory: Inventory, orders: list[Order] | None = None) -> list[Product]:
+def get_known_products(inventory: Inventory, orders: list[Order] | None = None):
     products = list(inventory.get_products())
     for order in orders or []:
         products.extend(line.get_product() for line in order.get_order_lines())
     return products
 
 
-def next_id(prefix: str, existing_ids: list[str]) -> str:
+def next_id(prefix: str, existing_ids: list[str]):
     numbers = [
         int(identifier[len(prefix):])
         for identifier in existing_ids
@@ -143,7 +154,7 @@ def next_id(prefix: str, existing_ids: list[str]) -> str:
     return f"{prefix}{max(numbers, default=0) + 1:03d}"
 
 
-def get_supplier_input(inventory: Inventory, orders: list[Order] | None = None) -> Supplier:
+def get_supplier_input(inventory: Inventory, orders: list[Order] | None = None):
     suppliers_by_id: dict[str, Supplier] = {}
     for product in get_known_products(inventory, orders):
         supplier = product.get_supplier()
@@ -241,7 +252,7 @@ def get_supplier_input(inventory: Inventory, orders: list[Order] | None = None) 
 # ADD PRODUCT
 # =========================================================
 
-def add_product(inventory: Inventory, orders: list[Order] | None = None) -> None:
+def add_product(inventory: Inventory, orders: list[Order] | None = None):
     invalid_characters = "[](),"
 
     print("\nAdd New Product")
@@ -264,25 +275,7 @@ def add_product(inventory: Inventory, orders: list[Order] | None = None) -> None
 
         break
 
-    while True:
-        price_input = input("Price: ").strip()
-
-        if not price_input:
-            print("Price cannot be empty.")
-            continue
-
-        try:
-            price = float(price_input)
-
-            if price < 0:
-                print("Price cannot be negative.")
-                continue
-
-            break
-
-        except ValueError:
-            print("Invalid price. Please enter a number.")
-            continue
+    price = get_positive_float("Price: ")
 
     while True:
         stock_input = input("Stock Quantity: ").strip()
@@ -346,8 +339,10 @@ def add_product(inventory: Inventory, orders: list[Order] | None = None) -> None
 
     supplier = get_supplier_input(inventory, orders)
 
-    product = selected_type["class"](
-        product_id, product_name, price, stock, extra_value, supplier
+    product = ProductFactory.create(
+        next(key for key, info in PRODUCT_TYPES.items() if info is selected_type),
+        product_id, product_name, price, stock, supplier,
+        **{selected_type["field"]: extra_value}
     )
 
     if inventory.add_product(product):
@@ -358,7 +353,7 @@ def add_product(inventory: Inventory, orders: list[Order] | None = None) -> None
 # UPDATE STOCK
 # =========================================================
 
-def update_stock(inventory: Inventory) -> None:
+def update_stock(inventory: Inventory):
     print("\nUpdate Stock")
 
     product_id = input("Enter Product ID: ").strip()
@@ -398,3 +393,43 @@ def update_stock(inventory: Inventory) -> None:
     print("\nStock updated successfully!")
 
 
+
+# =========================================================
+# VALIDATED PRICE INPUT AND DISCOUNT SELECTION
+# =========================================================
+
+def get_positive_float(prompt: str):
+    while True:
+        try:
+            value = float(input(prompt))
+            if not isfinite(value) or value <= 0:
+                print("Please enter a number greater than zero.")
+                continue
+            return value
+        except ValueError:
+            print("Please enter a valid number, e.g. 12.50")
+
+
+def get_discount_input():
+    while True:
+        print("\nOrder Discount")
+        print("1. No Discount")
+        print("2. Percentage Discount")
+        print("3. Bulk Discount")
+        print("4. Student Discount (5%)")
+        option = input("Enter option: ").strip()
+        if option == "1":
+            return NoDiscount()
+        if option == "2":
+            percentage = get_positive_float("Percentage: ")
+            if percentage > 100:
+                print("Percentage cannot exceed 100.")
+                continue
+            return PercentageDiscount(percentage)
+        if option == "3":
+            threshold = get_positive_float("Minimum order total: ")
+            amount = get_positive_float("Discount amount: ")
+            return BulkDiscount(threshold, amount)
+        if option == "4":
+            return StudentDiscount()
+        print("Invalid option. Please enter 1 to 4.")

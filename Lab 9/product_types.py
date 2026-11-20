@@ -1,21 +1,17 @@
-from Classes.product_physical import PhysicalProduct
-from Classes.product_digital import DigitalProduct
-from Classes.product_subscription import SubscriptionProduct
+from Classes.product_factory import ProductFactory
 from Classes.product import Product
 from Classes.supplier import Supplier
 
 
 # =========================================================
 # PRODUCT TYPE REGISTRY
-# Add new types here without changing Product, Inventory,
-# the file handlers, or Menu.
+# UI metadata for product types. Concrete creation belongs to ProductFactory.
 # =========================================================
 
 PRODUCT_TYPES = {
     "physical": {
         "option": "1",
         "label": "Physical Product",
-        "class": PhysicalProduct,
         "field": "weight",
         "prompt": "Weight (kg): ",
         "convert": float,
@@ -25,7 +21,6 @@ PRODUCT_TYPES = {
     "digital": {
         "option": "2",
         "label": "Digital Product",
-        "class": DigitalProduct,
         "field": "download_size",
         "prompt": "Download Size (MB): ",
         "convert": float,
@@ -35,7 +30,6 @@ PRODUCT_TYPES = {
     "subscription": {
         "option": "3",
         "label": "Subscription Product",
-        "class": SubscriptionProduct,
         "field": "duration_months",
         "prompt": "Duration (months): ",
         "convert": int,
@@ -45,7 +39,7 @@ PRODUCT_TYPES = {
 }
 
 
-def create_product(data: dict, supplier: Supplier) -> Product:
+def create_product(data: dict, supplier: Supplier):
     if not isinstance(data, dict):
         raise ValueError("Inventory record must be a dictionary")
 
@@ -63,17 +57,14 @@ def create_product(data: dict, supplier: Supplier) -> Product:
     if extra_value < product_info["minimum"]:
         raise ValueError(f"Invalid {product_info['field']}")
 
-    return product_info["class"](
-        data["id"],
-        data["name"],
-        float(data["price"]),
-        int(data["stock"]),
-        extra_value,
-        supplier
+    return ProductFactory.create(
+        product_type, data["id"], data["name"], float(data["price"]),
+        int(data["stock"]), supplier,
+        **{product_info["field"]: extra_value}
     )
 
 
-def restore_supplier(data: dict, suppliers: dict[str, Supplier]) -> Supplier:
+def restore_supplier(data: dict, suppliers: dict[str, Supplier]):
     supplier_data = data.get("supplier")
 
     if supplier_data is None:
