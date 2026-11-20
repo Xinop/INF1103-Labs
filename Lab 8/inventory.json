@@ -167,5 +167,18 @@
         },
         "type": "physical",
         "weight": 111.0
+    },
+    {
+        "id": "P014",
+        "name": "WHY",
+        "price": 111.0,
+        "stock": 2,
+        "supplier": {
+            "supplier_id": "S001",
+            "name": "john the ripper",
+            "contact_email": "ripjohn@gmail.com"
+        },
+        "type": "physical",
+        "weight": 100.0
     }
 ]

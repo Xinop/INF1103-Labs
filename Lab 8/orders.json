@@ -77,5 +77,42 @@
                 "quantity": 1
             }
         ]
+    },
+    {
+        "order_id": "O004",
+        "order_lines": [
+            {
+                "product": {
+                    "id": "P009",
+                    "name": "k license",
+                    "price": 10.0,
+                    "stock": 11,
+                    "supplier": {
+                        "supplier_id": "S001",
+                        "name": "john the ripper",
+                        "contact_email": "ripjohn@gmail.com"
+                    },
+                    "type": "digital",
+                    "download_size": 99991.0
+                },
+                "quantity": 2
+            },
+            {
+                "product": {
+                    "id": "P006",
+                    "name": "joey",
+                    "price": 8.0,
+                    "stock": 2,
+                    "supplier": {
+                        "supplier_id": "UNASSIGNED",
+                        "name": "Unassigned (legacy product)",
+                        "contact_email": ""
+                    },
+                    "type": "digital",
+                    "download_size": 100.0
+                },
+                "quantity": 2
+            }
+        ]
     }
 ]
