@@ -126,5 +126,61 @@
                 "quantity": 2
             }
         ]
+    },
+    {
+        "order_id": "O005",
+        "discount": {
+            "type": "none"
+        },
+        "order_lines": [
+            {
+                "product": {
+                    "id": "P001",
+                    "name": "John",
+                    "price": 3.0,
+                    "stock": 4,
+                    "supplier": {
+                        "supplier_id": "UNASSIGNED",
+                        "name": "Unassigned (legacy product)",
+                        "contact_email": ""
+                    },
+                    "type": "physical",
+                    "weight": 0.0
+                },
+                "quantity": 2
+            },
+            {
+                "product": {
+                    "id": "P002",
+                    "name": "Jerry",
+                    "price": 4.0,
+                    "stock": 4,
+                    "supplier": {
+                        "supplier_id": "UNASSIGNED",
+                        "name": "Unassigned (legacy product)",
+                        "contact_email": ""
+                    },
+                    "type": "physical",
+                    "weight": 0.0
+                },
+                "quantity": 1
+            },
+            {
+                "product": {
+                    "id": "P003",
+                    "name": "Joey",
+                    "price": 0.33,
+                    "stock": 1,
+                    "supplier": {
+                        "supplier_id": "UNASSIGNED",
+                        "name": "Unassigned (legacy product)",
+                        "contact_email": ""
+                    },
+                    "type": "physical",
+                    "weight": 0.0
+                },
+                "quantity": 22
+            }
+        ]
     }
 ]

@@ -436,9 +436,7 @@ def get_discount_input():
         print("Invalid option. Please enter 1 to 4.")
 
 
-# =========================================================
 # IMPORT PRODUCTS FROM CSV
-# =========================================================
 
 def import_products_csv(inventory: Inventory, orders: list[Order]):
     print("\nImport Products from CSV")
