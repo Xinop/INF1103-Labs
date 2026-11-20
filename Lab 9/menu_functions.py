@@ -11,6 +11,7 @@ from Classes.discount_percentage import PercentageDiscount
 from Classes.discount_bulk import BulkDiscount
 from Classes.discount_student import StudentDiscount
 from math import isfinite
+from load_products import load_products
 
 
 # =========================================================
@@ -433,3 +434,17 @@ def get_discount_input():
         if option == "4":
             return StudentDiscount()
         print("Invalid option. Please enter 1 to 4.")
+
+
+# =========================================================
+# IMPORT PRODUCTS FROM CSV
+# =========================================================
+
+def import_products_csv(inventory: Inventory, orders: list[Order]):
+    print("\nImport Products from CSV")
+    path = input("CSV path (blank for products.csv): ").strip()
+    if not path:
+        path = "products.csv"
+
+    supplier = get_supplier_input(inventory, orders)
+    load_products(path, inventory, supplier)

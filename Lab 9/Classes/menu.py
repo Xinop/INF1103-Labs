@@ -5,6 +5,7 @@ from .order import Order
 from menu_functions import (
     add_product, display_all, display_orders, next_id, search_order,
     search_product, update_order, update_stock, get_discount_input,
+    import_products_csv,
 )
 
 
@@ -76,15 +77,16 @@ class Menu:
         print("3. Update Stock")
         print("4. Search Product")
         print("5. Save Inventory")
-        print("--------------------------")
         print("===== ORDERS =====")
         print("6. Display All Orders")
         print("7. Create Order")
         print("8. Search Order")
         print("9. Update Order")
+        print("===== CSV IMPORT =====")
+        print("10. Import Products from CSV")
         print("--------------------------")
-        print("10. Exit")
-        print("--------------------------")
+        print("0. Exit")
+
 
     def run(self):
         while True:
@@ -132,6 +134,10 @@ class Menu:
                 continue
 
             if option == "10":
+                import_products_csv(self.inventory, self.orders)
+                continue
+
+            if option == "0":
                 print("\nSaving inventory before exit...")
                 self.inventory_file_handler.save_inventory(self.inventory)
                 self.order_file_handler.save_orders(self.orders)
@@ -140,4 +146,4 @@ class Menu:
                 print("Program terminated.")
                 break
 
-            print("Invalid option. Please enter 1 to 10.")
+            print("Invalid option. Please enter 0 to 10.")

@@ -1,0 +1,3 @@
+Run both from the Lab 9 root:
+
+python -m unittest discover -s tests -v

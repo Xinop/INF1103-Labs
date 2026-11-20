@@ -1,6 +1,9 @@
 [
     {
         "order_id": "O001",
+        "discount": {
+            "type": "none"
+        },
         "order_lines": [
             {
                 "product": {
@@ -22,6 +25,9 @@
     },
     {
         "order_id": "O002",
+        "discount": {
+            "type": "none"
+        },
         "order_lines": [
             {
                 "product": {
@@ -43,6 +49,9 @@
     },
     {
         "order_id": "O003",
+        "discount": {
+            "type": "none"
+        },
         "order_lines": [
             {
                 "product": {
@@ -80,6 +89,9 @@
     },
     {
         "order_id": "O004",
+        "discount": {
+            "type": "none"
+        },
         "order_lines": [
             {
                 "product": {
