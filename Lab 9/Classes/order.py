@@ -9,7 +9,8 @@ from .order_line import OrderLine
 # =========================================================
 
 class Order:
-    def __init__(self, order_id: str, discount: DiscountStrategy | None = None):
+    def __init__(self, order_id: str,
+                 discount: DiscountStrategy | None = None):
         self.__order_id: str = order_id
         self.__order_lines: list[OrderLine] = []
         if discount is None:

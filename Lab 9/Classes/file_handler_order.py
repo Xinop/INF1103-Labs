@@ -5,15 +5,16 @@ from .order import Order
 from .product import Product
 from .supplier import Supplier
 from product_types import create_product, restore_supplier
+from discount_types import create_discount
 
 
 class OrderFileHandler:
     """Load and save the orders file."""
 
-    def __init__(self, file_name: str) -> None:
+    def __init__(self, file_name: str):
         self.__orders_file: Path = Path(file_name)
 
-    def load_orders(self, inventory: Inventory) -> list[Order]:
+    def load_orders(self, inventory: Inventory):
         try:
             with self.__orders_file.open("r") as file:
                 orders_data = json.load(file)
@@ -33,7 +34,7 @@ class OrderFileHandler:
         }
         orders: list[Order] = []
         for data in orders_data:
-            order = Order(data["order_id"])
+            order = Order(data["order_id"], create_discount(data.get("discount")))
             for line in data["order_lines"]:
                 product_data = line["product"]
                 product_key = product_data["id"].lower()
@@ -48,10 +49,11 @@ class OrderFileHandler:
             orders.append(order)
         return orders
 
-    def save_orders(self, orders: list[Order]) -> None:
+    def save_orders(self, orders: list[Order]):
         orders_data = [
             {
                 "order_id": order.get_order_id(),
+                "discount": order.get_discount().to_dictionary(),
                 "order_lines": [
                     {
                         "product": line.get_product().to_dictionary(),

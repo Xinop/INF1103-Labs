@@ -1,6 +1,7 @@
 from math import isfinite
 from .discount_strategy import DiscountStrategy
 
+
 class BulkDiscount(DiscountStrategy):
     def __init__(self, threshold: float, amount: float):
         if not isfinite(threshold) or threshold < 0:

@@ -6,27 +6,27 @@ from .product import Product
 # =========================================================
 
 class Inventory:
-    def __init__(self) -> None:
+    def __init__(self):
         self.__products: list[Product] = []
 
-    def add_product(self, product: Product) -> bool:
+    def add_product(self, product: Product):
         if self.find_product(product.get_product_id()) is not None:
             return False
 
         self.__products.append(product)
         return True
 
-    def find_product(self, product_id: str) -> Product | None:
+    def find_product(self, product_id: str):
         for product in self.__products:
             if product.get_product_id().lower() == product_id.lower():
                 return product
 
         return None
 
-    def search_product(self, product_id: str) -> Product | None:
+    def search_product(self, product_id: str):
         return self.find_product(product_id)
 
-    def remove_product(self, product_id: str) -> Product | None:
+    def remove_product(self, product_id: str):
         product = self.find_product(product_id)
 
         if product is not None:
@@ -34,7 +34,7 @@ class Inventory:
 
         return product
 
-    def display_all(self) -> None:
+    def display_all(self):
         print("\nCurrent Inventory")
         print("------------------------------------------")
 
@@ -48,5 +48,5 @@ class Inventory:
 
         print("------------------------------------------")
 
-    def get_products(self) -> list[Product]:
+    def get_products(self):
         return self.__products

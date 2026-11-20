@@ -4,7 +4,7 @@ from .file_handler_order import OrderFileHandler
 from .order import Order
 from menu_functions import (
     add_product, display_all, display_orders, next_id, search_order,
-    search_product, update_order, update_stock,
+    search_product, update_order, update_stock, get_discount_input,
 )
 
 
@@ -15,13 +15,13 @@ from menu_functions import (
 class Menu:
     def __init__(self, inventory: Inventory,
                  inventory_file_handler: InventoryFileHandler,
-                 order_file_handler: OrderFileHandler) -> None:
+                 order_file_handler: OrderFileHandler):
         self.inventory: Inventory = inventory
         self.inventory_file_handler: InventoryFileHandler = inventory_file_handler
         self.order_file_handler: OrderFileHandler = order_file_handler
         self.orders: list[Order] = self.order_file_handler.load_orders(inventory)
 
-    def create_order(self) -> None:
+    def create_order(self):
         if not self.inventory.get_products():
             print("\nAdd products to the inventory before creating an order.")
             return
@@ -62,12 +62,13 @@ class Menu:
             print("Order cancelled: no products were added.")
             return
 
+        order.set_discount(get_discount_input())
         self.orders.append(order)
         self.order_file_handler.save_orders(self.orders)
         print("\nOrder created successfully!")
         order.display_information()
 
-    def menu(self) -> None:
+    def menu(self):
         print("\n---------- MENU ----------")
         print("===== PRODUCTS =====")
         print("1. Display All Products")
@@ -85,7 +86,7 @@ class Menu:
         print("10. Exit")
         print("--------------------------")
 
-    def run(self) -> None:
+    def run(self):
         while True:
             self.menu()
 

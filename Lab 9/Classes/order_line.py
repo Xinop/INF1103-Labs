@@ -6,18 +6,18 @@ from .product import Product
 # =========================================================
 
 class OrderLine:
-    def __init__(self, product: Product, quantity: int) -> None:
+    def __init__(self, product: Product, quantity: int):
         if quantity <= 0:
             raise ValueError("Order quantity must be positive")
 
         self._product: Product = product
         self._quantity: int = quantity
 
-    def get_product(self) -> Product:
+    def get_product(self):
         return self._product
 
-    def get_quantity(self) -> int:
+    def get_quantity(self):
         return self._quantity
 
-    def calculate_subtotal(self) -> float:
+    def calculate_subtotal(self):
         return self._product.get_price() * self._quantity

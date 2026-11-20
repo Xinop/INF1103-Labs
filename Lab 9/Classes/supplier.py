@@ -3,26 +3,26 @@
 # =========================================================
 
 class Supplier:
-    def __init__(self, supplier_id: str, name: str, contact_email: str) -> None:
+    def __init__(self, supplier_id: str, name: str, contact_email: str):
         self.__supplier_id: str = supplier_id
         self.__name: str = name
         self.__contact_email: str = contact_email
 
-    def get_supplier_id(self) -> str:
+    def get_supplier_id(self):
         return self.__supplier_id
 
-    def get_name(self) -> str:
+    def get_name(self):
         return self.__name
 
-    def get_contact_email(self) -> str:
+    def get_contact_email(self):
         return self.__contact_email
 
-    def display_information(self) -> None:
+    def display_information(self):
         print(f"Supplier ID: {self.__supplier_id}")
         print(f"Supplier Name: {self.__name}")
         print(f"Contact Email: {self.__contact_email or '(not provided)'}")
 
-    def to_dictionary(self) -> dict[str, str]:
+    def to_dictionary(self):
         return {
             "supplier_id": self.__supplier_id,
             "name": self.__name,

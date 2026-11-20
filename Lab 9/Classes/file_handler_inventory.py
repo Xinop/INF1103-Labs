@@ -7,10 +7,10 @@ from product_types import create_product, restore_supplier
 class InventoryFileHandler:
     """Load and save the inventory file."""
 
-    def __init__(self, file_name: str) -> None:
+    def __init__(self, file_name: str):
         self.__file_name: str = file_name
 
-    def load_inventory(self) -> Inventory:
+    def load_inventory(self):
         inventory = Inventory()
 
         try:
@@ -41,7 +41,7 @@ class InventoryFileHandler:
 
         return inventory
 
-    def save_inventory(self, inventory: Inventory) -> None:
+    def save_inventory(self, inventory: Inventory):
         inventory_data: list[dict[str, object]] = []
 
         for product in inventory.get_products():
